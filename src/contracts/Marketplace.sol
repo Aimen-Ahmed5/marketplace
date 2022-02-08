@@ -7,7 +7,20 @@ contract Marketplace {
 
 string public name;
 
+struct Product{
+    uint id;
+    string name;
+    uint price;
+     address owner;  //who owns the product and will then to buyer who buys the product 
+
+}
+
 constructor() public{
     name = "Gem Store";
 }
+
+
+
+
+
 }
