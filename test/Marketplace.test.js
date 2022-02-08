@@ -19,6 +19,15 @@ describe('deployment', async () =>{
     assert.notEqual(address, null)
     assert.notEqual(address, undefined)
   })
+
+  // if name is correct
+  it('has valid name', async () => {
+    const name = await marketplace.name()
+    assert.equal(name, 'Gem Store')
+  })
+
+
+
 })
 
 })
