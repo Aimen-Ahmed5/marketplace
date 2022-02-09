@@ -12,22 +12,30 @@ mapping(uint => Product) public products;
 struct Product{
     uint id;
     string name;
-    uint price;
+    uint price;  // item will be purchased in terms of ether (wei) on ethereum platform 
     address owner;  //who owns the product and will then to buyer who buys the product 
     bool purchased;
 }
+
+event productCreated(
+     uint id,
+    string name,
+    uint price,  
+    address owner,  
+    bool purchased
+);
 
 constructor() public{
     name = "Gem Store";
 }
 
-function createProduct() public {
-    // check if parametre is correct
-    // create product
-
+function createProduct(string memory _name, uint _price) public {
     //increment product count
     productCount++;
-    // trigger an event
+     // create product
+     products[productCount] = Product(productCount, _name, _price, msg.sender, false);
+    // trigger an event through event
+    emit productCreated(productCount, _name, _price, msg.sender, false);
 }
 
 
