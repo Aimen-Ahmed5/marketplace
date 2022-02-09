@@ -4,7 +4,6 @@ contract('Marketplace', (accounts) =>{
 
 let marketplace
 
-
 // first deploy marketplace on blockchain to use it to get components of the contract like address, name
 before(async () => {
   marketplace = await Marketplace.deployed()
@@ -26,7 +25,18 @@ describe('deployment', async () =>{
     assert.equal(name, 'Gem Store')
   })
 
+let result, productCount
+ 
+// create product on blockchain  
+describe('product', async () => {
+  result = await marketplace.createProduct()
+})
 
+//check id product created/added, then increment the productCount
+it('product created', async () => {
+  //success
+  assert.equal(productCount, 1)
+})
 
 })
 
