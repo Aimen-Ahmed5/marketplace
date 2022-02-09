@@ -30,6 +30,7 @@ let result, productCount
 // create product on blockchain  
 describe('product', async () => {
   result = await marketplace.createProduct()
+  productCount = await marketplace.productCount()
 })
 
 //check id product created/added, then increment the productCount
