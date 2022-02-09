@@ -1,6 +1,6 @@
 const Marketplace = artifacts.require('./Marketplace.sol')
 
-contract('Marketplace', (accounts) =>{
+contract('Marketplace', ([deployer, seller, buyer]) =>{
 
 let marketplace
 
@@ -10,7 +10,7 @@ before(async () => {
 })
 
 //if deployment is done successfully fetch address of marketplace (smart contract)
-describe('deployment', async () =>{
+describe('deployment', async () => {
   it('deployed successfully', async () => {
     const address = await marketplace.address 
     assert.notEqual(address, 0x0)
@@ -24,20 +24,33 @@ describe('deployment', async () =>{
     const name = await marketplace.name()
     assert.equal(name, 'Gem Store')
   })
-
-let result, productCount
  
 // create product on blockchain  
 describe('product', async () => {
-  result = await marketplace.createProduct()
-  productCount = await marketplace.productCount()
+  let result, productCount
+
+  before(async () => {
+  
+    // instead to writing whole wei value use web3 converter 
+    // msg.sender is seller (2nd account)
+    result = await marketplace.createProduct('Hand Bag', web3.utils.toWei('1', 'Ether'), { from: seller })
+    productCount = await marketplace.productCount()
+  })
+  //check id product created/added, then increment the productCount
+it('product created', async () => {
+  //SUCCESS
+  assert.equal(productCount, 1)
+ //  console.log(result.logs);
+ const event = result.logs[0].args
+ assert.equal(event.id.toNumber(), productCount.toNumber(), 'id is correct')
+ assert.equal(event.name, 'Hand Bag', 'product name is correct')
+ assert.equal(event.price, '1000000000000000000', 'price is correct')
+ assert.equal(event.owner, seller , 'owner is correct')
+ assert.equal(event.purchased, false, 'purchased status is correct')
+})
 })
 
-//check id product created/added, then increment the productCount
-it('product created', async () => {
-  //success
-  assert.equal(productCount, 1)
-})
+
 
 })
 
