@@ -1,5 +1,10 @@
 const Marketplace = artifacts.require('./Marketplace.sol')
 
+require('chai')
+.use(require('chai-as-promised'))
+.should()
+
+
 contract('Marketplace', ([deployer, seller, buyer]) =>{
 
 let marketplace
@@ -47,6 +52,15 @@ it('product created', async () => {
  assert.equal(event.price, '1000000000000000000', 'price is correct')
  assert.equal(event.owner, seller , 'owner is correct')
  assert.equal(event.purchased, false, 'purchased status is correct')
+
+ //FAILURE
+
+ //reject if no name
+await marketplace.createProduct('', web3.utils.toWei('1', 'Ether'), { from: seller }).should.be.rejected
+
+//reject if no price
+await marketplace.createProduct('Hand Bag', 0, { from: seller }).should.be.rejected
+
 })
 })
 
