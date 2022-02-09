@@ -60,8 +60,49 @@ await marketplace.createProduct('', web3.utils.toWei('1', 'Ether'), { from: sell
 
 //reject if no price
 await marketplace.createProduct('Hand Bag', 0, { from: seller }).should.be.rejected
-
 })
+
+it('list product', async () => {
+const product = await marketplace.products(productCount)
+assert.equal(product.id.toNumber(), productCount.toNumber(), 'id is correct')
+assert.equal(product.name, 'Hand Bag', 'product name is correct')
+assert.equal(product.price, '1000000000000000000', 'price is correct')
+assert.equal(product.owner, seller , 'owner is correct')
+assert.equal(product.purchased, false, 'purchased status is correct')
+})
+
+//here buyer will pay
+it('sells product', async () => {
+
+  //track sellers balance before purchase
+  let sellerOldBalance 
+  sellerOldBalance = await web3.eth.getBalance(seller)  //get balance of seller's account
+  sellerOldBalance = new web3.utils.BN(sellerOldBalance)
+
+  //SUCCESS buyer makes purchase
+  result = await marketplace.purchaseProduct(productCount, { from: buyer, value: web3.utils.toWei('1', 'Ether') })
+
+  //check logs
+  const event = result.logs[0].args
+ assert.equal(event.id.toNumber(), productCount.toNumber(), 'id is correct')
+ assert.equal(event.name, 'Hand Bag', 'product name is correct')
+ assert.equal(event.price, '1000000000000000000', 'price is correct')
+ assert.equal(event.owner, buyer, 'owner is correct')
+ assert.equal(event.purchased, true, 'purchased status is correct')
+
+ //check seller receives funds 
+ let sellerNewBalance
+ sellerNewBalance = await web3.eth.getBalance(seller) 
+ sellerNewBalance = new web3.utils.BN(sellerNewBalance)
+
+ let price 
+ price = web3.utils.toWei('1', 'Ether')
+ price = new web3.utils.BN(price)  // convert price tp Bit Number BN (use new)
+
+
+
+  })
+
 })
 
 
