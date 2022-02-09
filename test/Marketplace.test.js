@@ -1,3 +1,5 @@
+const { assert } = require('chai')
+
 const Marketplace = artifacts.require('./Marketplace.sol')
 
 require('chai')
@@ -99,7 +101,8 @@ it('sells product', async () => {
  price = web3.utils.toWei('1', 'Ether')
  price = new web3.utils.BN(price)  // convert price tp Bit Number BN (use new)
 
-
+const expectedBalance = sellerOldBalance.add(price)
+assert.equal(sellerNewBalance.toString(), expectedBalance.toString())
 
   })
 
