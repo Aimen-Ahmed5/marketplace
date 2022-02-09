@@ -63,7 +63,7 @@ function purchaseProduct(uint _id) public payable {
     address payable _seller = _product.owner;
 
     //check for valid product id 
-    require(_product.id > 0 && _product.id < productCount);
+    require(_product.id > 0 && _product.id <= productCount);
 
     //check for enough ether for transaction
     require(msg.value >= _product.price, "Not enough Ether");
