@@ -62,8 +62,17 @@ function purchaseProduct(uint _id) public payable {
     //fetch owner
     address payable _seller = _product.owner;
 
-    //check for valid product
+    //check for valid product id 
+    require(_product.id > 0 && _product.id < productCount);
 
+    //check for enough ether for transaction
+    require(msg.value >= _product.price, "Not enough Ether");
+
+    //check that product is not purchased first/ means product is avaialble
+    require(!_product.purchased);
+
+    //buyer can not be sender Check
+    require(_seller != msg.sender); // msg.sender is who calls this purchaseProduct function
 
     //convert seller to buyer ( who is calling is function)
     _product.owner = msg.sender;
