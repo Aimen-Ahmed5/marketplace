@@ -13,17 +13,26 @@ struct Product{
     uint id;
     string name;
     uint price;  // item will be purchased in terms of ether (wei) on ethereum platform 
-    address owner;  //who owns the product and will then to buyer who buys the product 
+    address payable owner;  //who owns the product and will then to buyer who buys the product 
     bool purchased;
 }
 
 event productCreated(
-     uint id,
+    uint id,
     string name,
     uint price,  
-    address owner,  
+    address payable owner,  
     bool purchased
 );
+
+event productPurchased(
+    uint id,
+    string name,
+    uint price,  
+    address payable owner,  
+    bool purchased
+);
+
 
 constructor() public{
     name = "Gem Store";
@@ -44,9 +53,35 @@ function createProduct(string memory _name, uint _price) public {
     emit productCreated(productCount, _name, _price, msg.sender, false);
 }
 
-function purchaseProduct(uint _id) public {
+// product id is given as argument and instance of that product will be created  
+function purchaseProduct(uint _id) public payable {
 
-    
+    //fetch product, Product is instantiated 
+    Product memory _product = products[_id];
+
+    //fetch owner
+    address payable _seller = _product.owner;
+
+    //check for valid product
+
+
+    //convert seller to buyer ( who is calling is function)
+    _product.owner = msg.sender;
+
+    //purchase it
+    _product.purchased = true;
+
+    //update product status in mapping
+    products[_id] = _product;
+
+    // transfer 10% of the amount to another account/ wallet
+
+
+    //paying seller by sending ether
+    address(_seller).transfer(msg.value);
+
+    //trigger an event
+    emit productPurchased(productCount, _product.name, _product.price, msg.sender, true);
 } 
 
 
