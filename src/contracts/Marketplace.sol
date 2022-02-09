@@ -30,6 +30,12 @@ constructor() public{
 }
 
 function createProduct(string memory _name, uint _price) public {
+    // require valid name
+    require(bytes(_name).length >0, "Invalid name");
+
+    //require valid price
+    require(_price >0, "Invalid amount");
+
     //increment product count
     productCount++;
      // create product
@@ -38,7 +44,10 @@ function createProduct(string memory _name, uint _price) public {
     emit productCreated(productCount, _name, _price, msg.sender, false);
 }
 
+function purchaseProduct(uint _id) public {
 
+    
+} 
 
 
 }
