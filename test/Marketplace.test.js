@@ -1,4 +1,4 @@
-const { assert } = require('chai')
+const { assert, should } = require('chai')
 
 const Marketplace = artifacts.require('./Marketplace.sol')
 
@@ -103,6 +103,16 @@ it('sells product', async () => {
 
 const expectedBalance = sellerOldBalance.add(price)
 assert.equal(sellerNewBalance.toString(), expectedBalance.toString())
+
+//Failure
+// if product does not have valid id
+await marketplace.purchaseProduct(99, { from: buyer, value: web3.utils.toWei('1', 'Ether') }).should.be.rejected
+
+// not enough ether to buy the product
+await marketplace.purchaseProduct(productCount, { from: buyer, value: web3.utils.toWei('0.5', 'Ether') }).should.be.rejected
+
+// product can not be purchased twice
+await marketplace.purchaseProduct(productCount, { from: deployer, value: web3.utils.toWei('1', 'Ether') }).should.be.rejected
 
   })
 
