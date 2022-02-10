@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import './App.css';
 import Marketplace from '../abis/Marketplace.json'
 import Navbar from './Navbar'
+import Main from './Main';
 
 class App extends Component {
   async componentDidMount() {
@@ -65,9 +66,11 @@ class App extends Component {
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex">
-              <div id= "content">
-                <h1>Add Product</h1>
-              </div>
+              {
+              this.state.loading ? 
+              <div id="loader" className="text-center"><h3 className="text-center"> Loading...</h3></div> 
+              : <Main />
+               }    
             </main>
           </div>
         </div>
