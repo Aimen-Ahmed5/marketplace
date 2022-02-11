@@ -29,25 +29,41 @@ class App extends Component {
   }
 
   async loadBlockchainData (){
+    // get network provider
    const web3 = window.web3
-   //load accounts
+   // use web3 to load user accounts
    const accounts = await web3.eth.getAccounts()
-   // console.log(accounts) 
+
+   // window.ethereum
+   // const accounts = await ethereum.request({ method: 'eth_accounts' }); 
+
+   // console.log(accounts)
+
    this.setState({account: accounts[0]})
    const networkId = await web3.eth.net.getId()
    //console.log(networkId) 
    const networkData = Marketplace.networks[networkId]  //networkId = 5777 or 1337 
    if (networkData){
     const marketplace = web3.eth.Contract(Marketplace.abi, networkData.address)  //contract loaded from blockchain
-   // console.log(marketplace)
-   this.setState({marketplace})
-   this.setState({loading: false})
-   } else {
-    window.alert('Marketplace contract not deployed to detect network')
-   }
-  
-  }
+    // console.log(marketplace)
+    this.setState({marketplace})
+    const productCount = await marketplace.methods.productCount().call()  // call() and .send in web3 sends data
+    this.setState({productCount})
+    // console.log(productCount.toString())
 
+    //load products
+    for(var i =1; i <= productCount; i++){
+      const product = await marketplace.methods.products(i).call() //read the mapping 
+      this.setState({
+        peoducts: [...this.state.product, product] // through spread op take existing products and add new to it
+      })
+    }
+    this.setState({loading: false})
+    console.log(this.state.products)
+  } else {
+    window.alert('Marketplace contract not deployed to detected network')
+   }
+  }
   constructor(props){
     super (props)
     this.state = { 
@@ -57,6 +73,16 @@ class App extends Component {
       products: [],
       loading: true
     }
+  }
+
+  createProduct(name, price){
+    this.setState({loading: true})
+    this.state.marketplace.methods.createProduct(name, price).send({ from: this.state.account})  //promise used
+    .once('receipt', receipt => {
+      this.setState({loading: false})
+    })
+    // to tell react that createProduct in main and function are same
+    this.createProduct = this.createProduct.bind(this) 
   }
 
   render() {
@@ -69,7 +95,7 @@ class App extends Component {
               {
               this.state.loading ? 
               <div id="loader" className="text-center"><h3 className="text-center"> Loading...</h3></div> 
-              : <Main />
+              : <Main createProduct = {this.createProduct} />
                }    
             </main>
           </div>
